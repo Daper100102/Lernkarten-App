@@ -1,34 +1,29 @@
 package pk.lkarten;
 
-public class Lernkarte {
+public abstract class Lernkarte {
 	
 	private static int counter = 0;
 	private final int id;
 	private String kategorie;
 	private String title;
 	private String frage;
-	private String antwort;
 	
-	public Lernkarte(String kategorie, String title, String frage, String antwort) {
+	public Lernkarte(String kategorie, String title, String frage) {
 		
 		this.id = counter++;
 		this.kategorie = kategorie;
 		this.title = title;
 		this.frage = frage;
-		this.antwort = antwort;
 	}
 	
 	public void zeigeVorderseite() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[").append(getId()).append(", ").append(getKategorie()).append("] ").append(getTitle()).append(": \n").append(getFrage());
+		sb.append("[").append(this.id).append(", ").append(this.kategorie).append("] ").append(this.title).append(": \n").append(this.frage);
 		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		System.out.println(sb);
 	}
 	
-	public void zeigeRueckseite() {
-		System.out.println(getAntwort());
-		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-	}
+	public abstract void zeigeRueckseite();
 	
 	public void druckeKarte() {
 		zeigeVorderseite();
@@ -62,17 +57,4 @@ public class Lernkarte {
 	public void setFrage(String frage) {
 		this.frage = frage;
 	}
-
-	public String getAntwort() {
-		return antwort;
-	}
-
-	public void setAntwort(String antwort) {
-		this.antwort = antwort;
-	}
-	
-	
-	
-	
-
 }
