@@ -1,5 +1,7 @@
 package pk.lkarten;
 
+import java.util.Arrays;
+
 public class MehrfachantwortKarte extends Lernkarte {
 	
 	String[] moeglicheAntworten;
@@ -28,6 +30,27 @@ public class MehrfachantwortKarte extends Lernkarte {
 			System.out.println(Integer.toString(1+i) + ": " + this.moeglicheAntworten[i]);
 		}
 		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Arrays.hashCode(richtigeAntworten);
+		result = prime * result + Arrays.hashCode(moeglicheAntworten);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MehrfachantwortKarte other = (MehrfachantwortKarte) obj;
+		return Arrays.equals(richtigeAntworten, other.richtigeAntworten) && Arrays.equals(moeglicheAntworten, other.moeglicheAntworten);
 	}
 
 	public String[] getMoeglicheAntworten() {

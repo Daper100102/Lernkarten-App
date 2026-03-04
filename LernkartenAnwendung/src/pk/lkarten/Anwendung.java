@@ -8,10 +8,18 @@ public class Anwendung {
 
 	public static void main(String[] args) {
 		
-		LernkarteiListe lk = new LernkarteiListe();
+		Lernkartei lk = new Lernkartei();
 		Scanner scanner = new Scanner(System.in);
 		int eingabe = 0;
 		do {
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			System.out.println("Lernkarten-App");
+			System.out.println("1. Lernen!");
+			System.out.println("2. Einzelantwortkarte hinzufügen");
+			System.out.println("3. Drucke alle Karten");
+			System.out.println("4. Drucke Karten zu Kategorie");
+			System.out.println("8. Beenden");
+			System.out.println("Bitte Aktion wählen: ");
 			eingabe = scanner.nextInt();	
 			switch(eingabe) {
 			

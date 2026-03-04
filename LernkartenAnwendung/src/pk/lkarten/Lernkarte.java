@@ -1,5 +1,7 @@
 package pk.lkarten;
 
+import java.util.Objects;
+
 public abstract class Lernkarte {
 	
 	private static int counter = 1;
@@ -28,6 +30,29 @@ public abstract class Lernkarte {
 	public void druckeKarte() {
 		zeigeVorderseite();
 		zeigeRueckseite();
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(frage, kategorie, title);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Lernkarte other = (Lernkarte) obj;
+		return Objects.equals(frage, other.frage) && Objects.equals(kategorie, other.kategorie) && Objects.equals(title, other.title);
+	}
+	
+	public int compareTo(Lernkarte o) {
+		if(o==null)
+			return 1;
+		return Integer.compare(this.getId(), o.getId());
 	}
 
 	public int getId() {

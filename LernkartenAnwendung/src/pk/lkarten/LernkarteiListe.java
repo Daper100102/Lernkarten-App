@@ -15,6 +15,7 @@ public class LernkarteiListe {
 	
 	public void hinzufuegen(Lernkarte karte) {
 		this.Lernkartei.add(karte);
+		System.out.println("\n Lernkarte [" + karte.getId() + "] wurde erfolgreich hinzugefuegt \n");
 	}
 	
 	public void druckeAlleKarten() {
