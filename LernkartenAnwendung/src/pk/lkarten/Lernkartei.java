@@ -1,5 +1,8 @@
 package pk.lkarten;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -56,5 +59,13 @@ public class Lernkartei {
 			lkr[i] = list.get(r);
 		}
 		return lkr;
+	}
+	
+	public void exportiereEintraegeAlsCsv(Path datei) throws IOException{
+		StringBuilder sb = new StringBuilder();
+		for(Lernkarte k: Lernkartei) {
+			sb.append(k.exportiereAlsCsv()).append("\n");
+		}
+		Files.writeString(datei, sb.toString());
 	}
 }

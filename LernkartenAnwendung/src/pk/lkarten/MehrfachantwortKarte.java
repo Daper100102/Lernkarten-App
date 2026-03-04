@@ -42,8 +42,15 @@ public class MehrfachantwortKarte extends Lernkarte {
 		} 
 		if(richtigeAntworten.length < 1) throw new UngueltigeKarteException("min. 1 Antwort muss als richtig makiert sein (keine trick Fragen)!");
 		for(int i: richtigeAntworten) {
-			if(i < 1 || i >= moeglicheAntworten.length) throw new UngueltigeKarteException("Antworten müssen sich auf eine mogliche Antwort bezichen!");
+			if(i < 1 || i > moeglicheAntworten.length) throw new UngueltigeKarteException("Antworten müssen sich auf eine mogliche Antwort bezichen!");
 		}
+	}
+
+	@Override
+	public String exportiereAlsCsv() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.exportiereAlsCsv()).append(",").append(Arrays.toString(moeglicheAntworten)).append(",").append(Arrays.toString(richtigeAntworten));
+		return sb.toString();
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package pk.lkarten;
 
 import java.util.Objects;
 
-public abstract class Lernkarte implements ValidierbareKarte{
+public abstract class Lernkarte implements ValidierbareKarte, CsvExportable{
 	
 	private static int counter = 1;
 	private final int id;
@@ -37,6 +37,13 @@ public abstract class Lernkarte implements ValidierbareKarte{
 		if(kategorie == null || kategorie.isBlank() || kategorie.isEmpty()) throw new UngueltigeKarteException("Kategorie darf nicht leer sein!");
 		if(title == null || title.isBlank() || title.isEmpty()) throw new UngueltigeKarteException("Title darf nicht leer sein!");
 		if(frage == null || frage.isBlank() || frage.isEmpty()) throw new UngueltigeKarteException("Frage darf nicht leer sein!");
+	}
+
+	@Override
+	public String exportiereAlsCsv() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(id).append(",").append(kategorie).append(",").append(title).append(",").append(frage);
+		return sb.toString();
 	}
 
 	@Override

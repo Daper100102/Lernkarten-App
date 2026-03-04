@@ -27,6 +27,13 @@ public class EinzelantwortKarte extends Lernkarte {
 		if(antwort == null || antwort.isBlank() || antwort.isEmpty()) throw new UngueltigeKarteException("Antwort darf nicht leer sein!");
 	}
 
+	@Override
+	public String exportiereAlsCsv() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.exportiereAlsCsv()).append(",").append(antwort);
+		return sb.toString();
+	}
+
 
 	@Override
 	public int hashCode() {
