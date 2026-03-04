@@ -21,6 +21,14 @@ public class EinzelantwortKarte extends Lernkarte {
 	}
 	
 	@Override
+	public void validiere() throws UngueltigeKarteException {
+		// TODO Auto-generated method stub
+		super.validiere();
+		if(antwort == null || antwort.isBlank() || antwort.isEmpty()) throw new UngueltigeKarteException("Antwort darf nicht leer sein!");
+	}
+
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();

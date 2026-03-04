@@ -2,7 +2,7 @@ package pk.lkarten;
 
 import java.util.Objects;
 
-public abstract class Lernkarte {
+public abstract class Lernkarte implements ValidierbareKarte{
 	
 	private static int counter = 1;
 	private final int id;
@@ -32,6 +32,13 @@ public abstract class Lernkarte {
 		zeigeRueckseite();
 	}
 	
+	@Override
+	public void validiere() throws UngueltigeKarteException {
+		if(kategorie == null || kategorie.isBlank() || kategorie.isEmpty()) throw new UngueltigeKarteException("Kategorie darf nicht leer sein!");
+		if(title == null || title.isBlank() || title.isEmpty()) throw new UngueltigeKarteException("Title darf nicht leer sein!");
+		if(frage == null || frage.isBlank() || frage.isEmpty()) throw new UngueltigeKarteException("Frage darf nicht leer sein!");
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(frage, kategorie, title);

@@ -1,6 +1,7 @@
 package pk.lkarten;
 
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import javax.swing.JOptionPane;
 
@@ -20,7 +21,16 @@ public class Anwendung {
 			System.out.println("4. Drucke Karten zu Kategorie");
 			System.out.println("8. Beenden");
 			System.out.println("Bitte Aktion wählen: ");
-			eingabe = scanner.nextInt();	
+			
+			do {
+				try {
+					eingabe = scanner.nextInt();
+				} catch (InputMismatchException e) {
+					scanner.nextLine();
+					System.out.println(e);
+				}
+			} while (eingabe < 1 && eingabe > 5);
+			
 			switch(eingabe) {
 			
 				case 1:
@@ -38,7 +48,11 @@ public class Anwendung {
 					String titel = JOptionPane.showInputDialog(null, "Bitte Titel eingeben:");
 					String frage = JOptionPane.showInputDialog(null, "Bitte Frage eingeben:");
 					String antwort = JOptionPane.showInputDialog(null, "Bitte Antwort eingeben:");
-					lk.hinzufuegen(new EinzelantwortKarte(kategorie, titel, frage, antwort));
+					try {
+						lk.hinzufuegen(new EinzelantwortKarte(kategorie, titel, frage, antwort));
+					} catch(UngueltigeKarteException e) {
+						JOptionPane.showConfirmDialog(null, e, "UngueltigeKarteException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					}
 					break;
 					
 				case 3:

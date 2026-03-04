@@ -33,6 +33,20 @@ public class MehrfachantwortKarte extends Lernkarte {
 	}
 	
 	@Override
+	public void validiere() throws UngueltigeKarteException {
+		// TODO Auto-generated method stub
+		super.validiere();
+		if(moeglicheAntworten.length < 2) throw new UngueltigeKarteException("Es muss min. 2 moegliche Antworten geben");
+		for(String s: moeglicheAntworten) {
+			if(s == null || s.isBlank() || s.isEmpty()) throw new UngueltigeKarteException("moegliche Antwort darf nicht leer sein!");
+		} 
+		if(richtigeAntworten.length < 1) throw new UngueltigeKarteException("min. 1 Antwort muss als richtig makiert sein (keine trick Fragen)!");
+		for(int i: richtigeAntworten) {
+			if(i < 1 || i >= moeglicheAntworten.length) throw new UngueltigeKarteException("Antworten müssen sich auf eine mogliche Antwort bezichen!");
+		}
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
