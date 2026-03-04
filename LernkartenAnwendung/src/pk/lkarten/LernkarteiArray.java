@@ -2,11 +2,11 @@ package pk.lkarten;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Lernkartei {
+public class LernkarteiArray {
 	
 	private final Lernkarte[] Lernkartei;
 
-	public Lernkartei(int karteigroesse) {
+	public LernkarteiArray(int karteigroesse) {
 		this.Lernkartei = new Lernkarte[karteigroesse];
 	}
 	
@@ -23,7 +23,7 @@ public class Lernkartei {
 	
 	public void druckeAlleKarten() {
 		for (int i = 0; i < Lernkartei.length; i++) {
-			Lernkartei[i].druckeKarte();
+			if(Lernkartei[i] != null) Lernkartei[i].druckeKarte();
 		}
 	}
 	
@@ -41,9 +41,11 @@ public class Lernkartei {
 		Lernkarte[] lkk = new Lernkarte[Lernkartei.length];
 		int i = 0;
 		for (Lernkarte k: Lernkartei) {
-			if(k.getKategorie() == kategorie) {
-				lkk[i] = k;
-				i++;
+			if(k != null) {
+				if(k.getKategorie() == kategorie) {
+					lkk[i] = k;
+					i++;
+				}
 			}
 		}
 		return lkk;
@@ -53,7 +55,11 @@ public class Lernkartei {
 		Lernkarte[] lkr = new Lernkarte[anzahlKarten];
 		for (int i = 0; i < anzahlKarten; i++) {
 			int r = ThreadLocalRandom.current().nextInt(0, Lernkartei.length);
-			lkr[i] = Lernkartei[r];
+			if(Lernkartei[r] != null) {
+				lkr[i] = Lernkartei[r];
+			} else {
+				anzahlKarten++;
+			}
 		}
 		return lkr;
 	}
