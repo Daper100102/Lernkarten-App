@@ -1,9 +1,17 @@
 package pk.lkarten;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Lernkarte implements ValidierbareKarte, CsvExportable{
+public abstract class Lernkarte implements ValidierbareKarte, CsvExportable, Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8588143922134590320L;
 	private static int counter = 1;
 	private final int id;
 	private String kategorie;
@@ -18,25 +26,27 @@ public abstract class Lernkarte implements ValidierbareKarte, CsvExportable{
 		this.frage = frage;
 	}
 	
-	public void zeigeVorderseite() {
+	public void zeigeVorderseite(OutputStream os) throws IOException {
 		StringBuilder sb = new StringBuilder();
-		sb.append("[").append(this.id).append(", ").append(this.kategorie).append("] ").append(this.title).append(": \n").append(this.frage);
-		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		System.out.println(sb);
+		sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++").append("\n").append("[").append(this.id).append(", ")
+		.append(this.kategorie).append("] ").append(this.title).append(": \n").append(this.frage);
+		OutputStreamWriter osw = new OutputStreamWriter(os);
+		osw.write(sb.toString().toCharArray());
+		osw.flush();
 	}
 	
-	public abstract void zeigeRueckseite();
+	public abstract void zeigeRueckseite(OutputStream os) throws IOException;
 	
-	public void druckeKarte() {
-		zeigeVorderseite();
-		zeigeRueckseite();
+	public void druckeKarte() throws IOException {
+		zeigeVorderseite(System.out);
+		zeigeRueckseite(System.out);
 	}
 	
 	@Override
 	public void validiere() throws UngueltigeKarteException {
-		if(kategorie == null || kategorie.isBlank() || kategorie.isEmpty()) throw new UngueltigeKarteException("Kategorie darf nicht leer sein!");
-		if(title == null || title.isBlank() || title.isEmpty()) throw new UngueltigeKarteException("Title darf nicht leer sein!");
-		if(frage == null || frage.isBlank() || frage.isEmpty()) throw new UngueltigeKarteException("Frage darf nicht leer sein!");
+		if(kategorie == null || kategorie.isBlank()) throw new UngueltigeKarteException("Kategorie darf nicht leer sein!");
+		if(title == null || title.isBlank()) throw new UngueltigeKarteException("Title darf nicht leer sein!");
+		if(frage == null || frage.isBlank()) throw new UngueltigeKarteException("Frage darf nicht leer sein!");
 	}
 
 	@Override
@@ -95,5 +105,13 @@ public abstract class Lernkarte implements ValidierbareKarte, CsvExportable{
 
 	public void setFrage(String frage) {
 		this.frage = frage;
+	}
+
+	public static int getCounter() {
+		return counter;
+	}
+
+	public static void setCounter(int counter) {
+		Lernkarte.counter = counter;
 	}
 }

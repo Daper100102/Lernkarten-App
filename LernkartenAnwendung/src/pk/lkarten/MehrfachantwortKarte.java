@@ -1,9 +1,16 @@
 package pk.lkarten;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
 public class MehrfachantwortKarte extends Lernkarte {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6815835446565694685L;
 	String[] moeglicheAntworten;
 	int[] richtigeAntworten;
 	
@@ -14,22 +21,28 @@ public class MehrfachantwortKarte extends Lernkarte {
 		this.richtigeAntworten = richtigeAntworten;
 	}
 	
-	public void zeigeVorderseite() {
-		super.zeigeVorderseite();
+	public void zeigeVorderseite(OutputStream os) throws IOException {
+		super.zeigeVorderseite(os);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < this.moeglicheAntworten.length; i++) {
 			sb.append("\n").append(Integer.toString(1+i)).append(": ").append(this.moeglicheAntworten[i]);
 		}
-		System.out.println(sb);
+		OutputStreamWriter osw = new OutputStreamWriter(os);
+		osw.write(sb.toString().toCharArray());
+		osw.flush();
 	}
 
 	@Override
-	public void zeigeRueckseite() {
-		System.out.println("Die richtigen Antworten sind:");
+	public void zeigeRueckseite(OutputStream os) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Die richtigen Antworten sind:");
 		for (int i: this.richtigeAntworten) {
-			System.out.println(Integer.toString(1+i) + ": " + this.moeglicheAntworten[i]);
+			sb.append(Integer.toString(1+i)).append(": ").append(moeglicheAntworten[i-1]).append("\n");
 		}
-		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		OutputStreamWriter osw = new OutputStreamWriter(os);
+		osw.write(sb.toString().toCharArray());
+		osw.flush();
 	}
 	
 	@Override
@@ -38,7 +51,7 @@ public class MehrfachantwortKarte extends Lernkarte {
 		super.validiere();
 		if(moeglicheAntworten.length < 2) throw new UngueltigeKarteException("Es muss min. 2 moegliche Antworten geben");
 		for(String s: moeglicheAntworten) {
-			if(s == null || s.isBlank() || s.isEmpty()) throw new UngueltigeKarteException("moegliche Antwort darf nicht leer sein!");
+			if(s == null || s.isBlank()) throw new UngueltigeKarteException("moegliche Antwort darf nicht leer sein!");
 		} 
 		if(richtigeAntworten.length < 1) throw new UngueltigeKarteException("min. 1 Antwort muss als richtig makiert sein (keine trick Fragen)!");
 		for(int i: richtigeAntworten) {

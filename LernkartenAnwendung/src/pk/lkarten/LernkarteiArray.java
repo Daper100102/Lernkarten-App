@@ -1,5 +1,6 @@
 package pk.lkarten;
 
+import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LernkarteiArray {
@@ -21,7 +22,7 @@ public class LernkarteiArray {
 		System.out.println("\n Die Lernkartei ist bereits voll! \n Die Karte konnte nicht hinzugefuegt werden. \n");
 	}
 	
-	public void druckeAlleKarten() {
+	public void druckeAlleKarten() throws IOException {
 		for (int i = 0; i < Lernkartei.length; i++) {
 			if(Lernkartei[i] != null) Lernkartei[i].druckeKarte();
 		}

@@ -1,9 +1,16 @@
 package pk.lkarten;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Objects;
 
 public class EinzelantwortKarte extends Lernkarte {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -78267265362131970L;
 	private String antwort;
 	
 	public EinzelantwortKarte(String kategorie, String title, String frage, String antwort) {
@@ -14,17 +21,18 @@ public class EinzelantwortKarte extends Lernkarte {
 	
 
 	@Override
-	public void zeigeRueckseite() {
-		System.out.println(this.antwort);
-		System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
+	public void zeigeRueckseite(OutputStream os) throws IOException {
+		String s = antwort + "\n" + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+		OutputStreamWriter osw = new OutputStreamWriter(os);
+		osw.write(s.toCharArray());
+		osw.flush();
 	}
 	
 	@Override
 	public void validiere() throws UngueltigeKarteException {
 		// TODO Auto-generated method stub
 		super.validiere();
-		if(antwort == null || antwort.isBlank() || antwort.isEmpty()) throw new UngueltigeKarteException("Antwort darf nicht leer sein!");
+		if(antwort == null || antwort.isBlank()) throw new UngueltigeKarteException("Antwort darf nicht leer sein!");
 	}
 
 	@Override

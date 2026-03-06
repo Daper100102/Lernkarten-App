@@ -1,6 +1,14 @@
 package pk.lkarten;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -27,7 +35,7 @@ public class Lernkartei {
 		}
 	}
 	
-	public void druckeAlleKarten() {
+	public void druckeAlleKarten() throws IOException {
 		ArrayList<Lernkarte> list = new ArrayList<>(Lernkartei);
 		Collections.sort(list, (o1, o2) -> -(o1.compareTo(o2)));
 		for(Lernkarte k: list) {
@@ -61,11 +69,39 @@ public class Lernkartei {
 		return lkr;
 	}
 	
-	public void exportiereEintraegeAlsCsv(Path datei) throws IOException{
+	public void exportiereEintraegeAlsCsvNio(Path datei) throws IOException{
 		StringBuilder sb = new StringBuilder();
 		for(Lernkarte k: Lernkartei) {
 			sb.append(k.exportiereAlsCsv()).append("\n");
 		}
 		Files.writeString(datei, sb.toString());
+	}
+	
+	public void exportiereEintraegeAlsCsv(Path datei) throws IOException{
+		StringBuilder sb = new StringBuilder();
+		for(Lernkarte k: Lernkartei) {
+			sb.append(k.exportiereAlsCsv()).append("\n");
+		}
+		try(FileWriter fw = new FileWriter(datei.toFile()); PrintWriter pw = new PrintWriter(fw)) {
+			pw.print(sb.toString());
+		}
+	}
+	
+	public void Speichern(File datei) throws FileNotFoundException, IOException {
+		try(FileOutputStream fos = new FileOutputStream(datei); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			oos.writeObject(Lernkartei);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void Laden(File datei) throws IOException, ClassNotFoundException {
+		try(FileInputStream fis = new FileInputStream(datei); ObjectInputStream ois = new ObjectInputStream(fis)) {
+			Lernkartei.addAll((HashSet<Lernkarte>)ois.readObject());
+		}
+		int i = 0;
+		for (Lernkarte k: Lernkartei) {
+			if(i <= k.getId()) i = 1+k.getId(); 
+		}
+		Lernkarte.setCounter(i);
 	}
 }

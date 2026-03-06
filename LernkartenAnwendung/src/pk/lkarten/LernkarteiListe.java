@@ -1,5 +1,6 @@
 package pk.lkarten;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,7 +19,7 @@ public class LernkarteiListe {
 		System.out.println("\n Lernkarte [" + karte.getId() + "] wurde erfolgreich hinzugefuegt \n");
 	}
 	
-	public void druckeAlleKarten() {
+	public void druckeAlleKarten() throws IOException {
 		Iterator<Lernkarte> iterator = Lernkartei.iterator();
 		while (iterator.hasNext()) {
 			iterator.next().druckeKarte();
