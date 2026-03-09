@@ -1,5 +1,11 @@
 package pk.lkarten.ui;
 
+import java.util.Iterator;
+
+import javax.swing.JOptionPane;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -9,6 +15,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import pk.lkarten.EinzelantwortKarte;
+import pk.lkarten.Lernkarte;
+import pk.lkarten.UngueltigeKarteException;
 
 public class EinzelantwortErfassungView extends ErfassungView {
 	
@@ -23,11 +31,11 @@ public class EinzelantwortErfassungView extends ErfassungView {
 	public void showView() {
 		super.showView();
 		
-		var s = new Stage();
+		final Stage s = new Stage();
 	    s.initOwner(stage);
 	    s.initModality(Modality.WINDOW_MODAL);
 	    
-		Label l1 = new Label("Antwort:");
+		Label l1 = new Label("Antwort: ");
 		TextArea ta1 = new TextArea(); 
 		
 		if(einzelantwort != null) {
@@ -35,20 +43,37 @@ public class EinzelantwortErfassungView extends ErfassungView {
 		}
 		
 		HBox hb4 = new HBox(l1,ta1);
-		
 		hb4.setPadding(new Insets(15.0));
 		hb4.setSpacing(10.0);
-		
 		gp.add(hb4, 0, 3);
 		
-		HBox hb5 = new HBox(b1,b2);
-		hb5.setPadding(new Insets(15.0));
-		hb5.setSpacing(10.0);
-		gp.add(hb5, 0, 4);
+		b1.setOnAction(new EventHandler<ActionEvent>() {		
+			@Override
+			public void handle(ActionEvent ae) {
+				try {
+					LernkartenApp.lk.hinzufuegen(new EinzelantwortKarte(tf1.getText(), tf2.getText(), tf3.getText(), ta1.getText()));
+				} catch (UngueltigeKarteException e) {
+					JOptionPane.showConfirmDialog(null, e, "UngueltigeKarteException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					Lernkarte.setCounter(Lernkarte.getCounter()-1);
+				}
+				LernkartenApp.listview.getItems().clear();
+				Iterator<Lernkarte> i = LernkartenApp.lk.getIterator();
+				while(i.hasNext()) {
+					 LernkartenApp.listview.getItems().add(i.next().toString());
+				}
+				s.close();
+			}
+		});
 		
-
-		s.setWidth(600);
-		s.setHeight(400);
+		b2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent ae) {
+            	s.close();
+            }
+        });
+		
+		s.setWidth(800);
+		s.setHeight(600);
 		s.setResizable(false);
 		ScrollPane scroll = new ScrollPane(gp);
 		scroll.setFitToWidth(true);

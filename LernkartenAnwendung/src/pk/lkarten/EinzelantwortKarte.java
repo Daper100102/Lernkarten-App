@@ -42,6 +42,11 @@ public class EinzelantwortKarte extends Lernkarte {
 		return sb.toString();
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + " (EK)";
+	}
+
 
 	@Override
 	public int hashCode() {

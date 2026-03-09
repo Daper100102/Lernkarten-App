@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Lernkartei {
@@ -95,13 +96,21 @@ public class Lernkartei {
 	
 	@SuppressWarnings("unchecked")
 	public void Laden(File datei) throws IOException, ClassNotFoundException {
+		HashSet<Lernkarte> hs;
 		try(FileInputStream fis = new FileInputStream(datei); ObjectInputStream ois = new ObjectInputStream(fis)) {
-			Lernkartei.addAll((HashSet<Lernkarte>)ois.readObject());
+			hs = (HashSet<Lernkarte>)ois.readObject();
 		}
-		int i = 0;
-		for (Lernkarte k: Lernkartei) {
-			if(i <= k.getId()) i = 1+k.getId(); 
+		Lernkarte.setCounter(hs.size()+1);
+		for(Lernkarte k: Lernkartei) {
+			if(k.getId() < Lernkarte.getCounter()) {
+				k.setId(Lernkarte.getCounter());
+				Lernkarte.setCounter((Lernkarte.getCounter()+1));
+			}
 		}
-		Lernkarte.setCounter(i);
+		Lernkartei.addAll(hs);
+	}
+	
+	public Iterator<Lernkarte> getIterator() {
+		return Lernkartei.iterator();
 	}
 }

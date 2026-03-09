@@ -67,6 +67,11 @@ public class MehrfachantwortKarte extends Lernkarte {
 	}
 
 	@Override
+	public String toString() {
+		return super.toString() + " (MK)";
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
@@ -90,6 +95,14 @@ public class MehrfachantwortKarte extends Lernkarte {
 	public String[] getMoeglicheAntworten() {
 		return moeglicheAntworten;
 	}
+	
+	public String moeglicheAntwortenString() {
+		StringBuilder sb = new StringBuilder();
+		for(int j = 0; j < moeglicheAntworten.length; j++) {
+			sb.append((j+1)).append(": ").append(moeglicheAntworten[j]).append("\n");
+		}
+		return sb.toString();
+	}
 
 	public void setMoeglicheAntworten(String[] moeglicheAntworten) {
 		this.moeglicheAntworten = moeglicheAntworten;
@@ -97,6 +110,24 @@ public class MehrfachantwortKarte extends Lernkarte {
 
 	public int[] getRichtigeAntworten() {
 		return richtigeAntworten;
+	}
+	
+	public String richtigeAntwortenString() {
+		StringBuilder sb = new StringBuilder();
+		for(int j = 0; j < moeglicheAntworten.length; j++) {
+			if(richtigeAntwortenContains((j+1))) {
+				sb.append(j+1).append(": ").append(moeglicheAntworten[j]).append("\n");
+			}
+		}
+		return sb.toString();
+	}
+	
+	public Boolean richtigeAntwortenContains(int i) {
+		boolean a = false;
+		for(int j: richtigeAntworten) {
+			if(j == i) a = true;
+		}
+		return a;
 	}
 
 	public void setRichtigeAntworten(int[] richtigeAntworten) {

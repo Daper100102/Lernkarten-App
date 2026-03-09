@@ -13,7 +13,7 @@ public abstract class Lernkarte implements ValidierbareKarte, CsvExportable, Ser
 	 */
 	private static final long serialVersionUID = 8588143922134590320L;
 	private static int counter = 1;
-	private final int id;
+	private int id;
 	private String kategorie;
 	private String title;
 	private String frage;
@@ -57,6 +57,11 @@ public abstract class Lernkarte implements ValidierbareKarte, CsvExportable, Ser
 	}
 
 	@Override
+	public String toString() {
+		return "Lernkarte [id=" + id + ", kategorie=" + kategorie + ", title=" + title + "]";
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hash(frage, kategorie, title);
 	}
@@ -85,6 +90,10 @@ public abstract class Lernkarte implements ValidierbareKarte, CsvExportable, Ser
 
 	public String getKategorie() {
 		return kategorie;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public void setKategorie(String kategorie) {
