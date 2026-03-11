@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import pk.lkarten.EinzelantwortKarte;
 import pk.lkarten.Lernkarte;
 import pk.lkarten.UngueltigeKarteException;
+import pk.lkarten.VorhandeneKarteException;
 
 public class EinzelantwortErfassungView extends ErfassungView {
 	
@@ -37,15 +38,19 @@ public class EinzelantwortErfassungView extends ErfassungView {
 	    
 		Label l1 = new Label("Antwort: ");
 		TextArea ta1 = new TextArea(); 
+		HBox hb4 = new HBox(l1,ta1);
+		ScrollPane scroll = new ScrollPane(gp);
+		
+		hb4.setPadding(new Insets(15.0));
+		hb4.setSpacing(10.0);
+		scroll.setFitToWidth(true);
+		scroll.setPannable(true);
+		
+		gp.add(hb4, 0, 3);
 		
 		if(einzelantwort != null) {
 			ta1.setText(einzelantwort.getAntwort());
 		}
-		
-		HBox hb4 = new HBox(l1,ta1);
-		hb4.setPadding(new Insets(15.0));
-		hb4.setSpacing(10.0);
-		gp.add(hb4, 0, 3);
 		
 		b1.setOnAction(new EventHandler<ActionEvent>() {		
 			@Override
@@ -55,6 +60,10 @@ public class EinzelantwortErfassungView extends ErfassungView {
 				} catch (UngueltigeKarteException e) {
 					JOptionPane.showConfirmDialog(null, e, "UngueltigeKarteException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 					Lernkarte.setCounter(Lernkarte.getCounter()-1);
+					showView();
+				} catch (VorhandeneKarteException e) {
+					JOptionPane.showConfirmDialog(null, e, "Karte nicht hinzugefuegt", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 				}
 				LernkartenApp.listview.getItems().clear();
 				Iterator<Lernkarte> i = LernkartenApp.lk.getIterator();
@@ -75,10 +84,6 @@ public class EinzelantwortErfassungView extends ErfassungView {
 		s.setWidth(800);
 		s.setHeight(600);
 		s.setResizable(false);
-		ScrollPane scroll = new ScrollPane(gp);
-		scroll.setFitToWidth(true);
-		scroll.setPannable(true);
-
 		s.setScene(new Scene(scroll));
 		s.show();
 	}	

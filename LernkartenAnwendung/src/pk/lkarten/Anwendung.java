@@ -69,6 +69,10 @@ public class Anwendung {
 						lk.hinzufuegen(new EinzelantwortKarte(kategorie, titel, frage, antwort));
 					} catch(UngueltigeKarteException e) {
 						JOptionPane.showConfirmDialog(null, e, "UngueltigeKarteException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					} catch (VorhandeneKarteException e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showConfirmDialog(null, e, "Karte nicht hinzugefuegt", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
 					}
 					break;
 					

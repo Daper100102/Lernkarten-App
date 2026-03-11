@@ -26,13 +26,15 @@ public class Lernkartei {
 		Lernkartei = new HashSet<Lernkarte>();
 	}
 	
-	public void hinzufuegen(Lernkarte karte) throws UngueltigeKarteException{
+	public void hinzufuegen(Lernkarte karte) throws UngueltigeKarteException, VorhandeneKarteException{
 		karte.validiere();
 		if(!Lernkartei.contains(karte)) {
 			Lernkartei.add(karte);
 			System.out.println("\n Lernkarte [" + karte.getId() + "] wurde erfolgreich hinzugefuegt \n");
 		}else {
 			System.out.println("Lernkarte exsestiert bereits.");
+			Lernkarte.setCounter(Lernkarte.getCounter()-1);
+			throw new VorhandeneKarteException("Lernkarte exsestiert bereits.");
 		}
 	}
 	

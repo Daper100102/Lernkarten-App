@@ -5,13 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Iterator;
-
 import javax.swing.JOptionPane;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -41,7 +40,7 @@ public class LernkartenApp extends Application {
 	@Override
 	public void start(Stage arg0) throws Exception {
 		// TODO Auto-generated method stub
-		BorderPane bp = new BorderPane();
+		BorderPane bp = new BorderPane();	
 		
 		MenuBar mb = new MenuBar();
 		
@@ -60,13 +59,13 @@ public class LernkartenApp extends Application {
 		
 		Button b = new Button("Lernen!");
 		Spinner<Integer> spin = new Spinner<Integer>();
-		spin.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0, 1));
 		HBox hb = new HBox(b, spin);
 		
-		Iterator<Lernkarte> i = lk.getIterator();
-		while(i.hasNext()) {
-			 listview.getItems().add(i.next().toString());
-		} 
+		sp.setFitToWidth(true);
+		sp.setFitToHeight(true);
+		spin.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));			
+		hb.setPadding(new Insets(15.0));
+		hb.setSpacing(10.0);
 		
 		m1.getItems().add(mi1);
 		m1.getItems().add(mi2);
@@ -83,6 +82,11 @@ public class LernkartenApp extends Application {
 		bp.setTop(mb);
 		bp.setCenter(sp);
 		bp.setBottom(hb);
+		
+		Iterator<Lernkarte> i = lk.getIterator();
+		while(i.hasNext()) {
+			 listview.getItems().add(i.next().toString());
+		} 
 		
 		mi1.setAccelerator(KeyCombination.valueOf("Ctrl+L"));
 		mi2.setAccelerator(KeyCombination.valueOf("Ctrl+S"));
@@ -223,7 +227,11 @@ public class LernkartenApp extends Application {
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				Stage s = new Stage();
-				zeigeVorderseite(lk.erzeugeDeck(spin.getValue()), 0, s); //ToDo hinweis hinzufügen wenn Spinner 0
+				if(lk.gibAnzahlKarten() > 0) {
+					zeigeVorderseite(lk.erzeugeDeck(spin.getValue()), 0, s);
+				} else {
+					JOptionPane.showConfirmDialog(null, "Es muessen Lernkarten vorhanden sein wenn du Lernen willst!", "Keine Karten Vorhanden!", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		
@@ -264,6 +272,14 @@ public class LernkartenApp extends Application {
 			});
 			
 			vb = new VBox(t1,sep,t2,b);
+			vb.setSpacing(20);
+			vb.setPadding(new Insets(25));
+			s.setWidth(800);
+			s.setHeight(600);
+			s.setResizable(false);
+			ScrollPane scroll = new ScrollPane(vb);
+			scroll.setFitToWidth(true);
+			scroll.setPannable(true);
 			s.setScene(new Scene(vb));
 			s.show();
 		} else {
@@ -291,9 +307,11 @@ public class LernkartenApp extends Application {
 			}
 			t2.setFont(Font.font("Arial", 15));
 			
-			Button b = new Button("Naechste Karte");
-			int j = i+1;
+			Button b;
+			if(i+1 < lk.length) b = new Button("Naechste Karte");
+			else b = new Button("Beenden");
 			
+			int j = i+1;
 			b.setOnAction(new EventHandler<ActionEvent>() {			
 				@Override
 				public void handle(ActionEvent arg0) {
@@ -303,6 +321,14 @@ public class LernkartenApp extends Application {
 			});
 			
 			vb = new VBox(t1,sep,t2,b);
+			vb.setSpacing(20);
+			vb.setPadding(new Insets(25));
+			s.setWidth(800);
+			s.setHeight(600);
+			s.setResizable(false);
+			ScrollPane scroll = new ScrollPane(vb);
+			scroll.setFitToWidth(true);
+			scroll.setPannable(true);
 			s.setScene(new Scene(vb));
 			s.show();
 		} else {

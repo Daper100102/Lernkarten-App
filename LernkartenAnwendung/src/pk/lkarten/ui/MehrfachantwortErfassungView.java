@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import pk.lkarten.Lernkarte;
 import pk.lkarten.MehrfachantwortKarte;
 import pk.lkarten.UngueltigeKarteException;
+import pk.lkarten.VorhandeneKarteException;
 
 public class MehrfachantwortErfassungView extends ErfassungView{
 	
@@ -44,7 +45,14 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 	    s.initModality(Modality.WINDOW_MODAL);
 	    
 	    ant = new VBox();
-	    Button add = new Button("Neue Antwort");
+	    Button b3 = new Button("Neue Antwort");
+	    HBox hb5 = new HBox(b3);
+	    ScrollPane scroll = new ScrollPane(gp);
+	    
+	    hb5.setPadding(new Insets(15.0));
+		hb5.setSpacing(10.0);
+		scroll.setFitToWidth(true);
+		scroll.setPannable(true);
 		
 	    if(mehrfachantwort != null) {
 	    	for(int i = 0; i < mehrfachantwort.getMoeglicheAntworten().length; i++) {
@@ -62,10 +70,10 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 	    	}
 	    }
 	    	gp.add(ant, 0, 3);
-	    	gp.add(add, 0, 4);
+	    	gp.add(hb5, 0, 4);
 
 	    
-	    add.setOnAction(new EventHandler<ActionEvent>() {
+	    b3.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -109,6 +117,11 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 				} catch (UngueltigeKarteException e) {
 					JOptionPane.showConfirmDialog(null, e, "UngueltigeKarteException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 					Lernkarte.setCounter(Lernkarte.getCounter()-1);
+					showView();
+				} catch (VorhandeneKarteException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showConfirmDialog(null, e, "Karte nicht hinzugefuegt", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 				}
 				LernkartenApp.listview.getItems().clear();
 				Iterator<Lernkarte> it = LernkartenApp.lk.getIterator();
@@ -130,10 +143,6 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 	    s.setWidth(800);
 		s.setHeight(600);
 		s.setResizable(false);
-		ScrollPane scroll = new ScrollPane(gp);
-		scroll.setFitToWidth(true);
-		scroll.setPannable(true);
-
 		s.setScene(new Scene(scroll));
 		s.show();
 	}
