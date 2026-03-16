@@ -1,12 +1,9 @@
 package pk.lkarten;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Lernkarte implements ValidierbareKarte, CsvExportable, Serializable{
+public abstract class Lernkarte implements Comparable<Lernkarte>, ValidierbareKarte, CsvExportable, Serializable{
 	
 	/**
 	 * 
@@ -24,22 +21,6 @@ public abstract class Lernkarte implements ValidierbareKarte, CsvExportable, Ser
 		this.kategorie = kategorie;
 		this.title = title;
 		this.frage = frage;
-	}
-	
-	public void zeigeVorderseite(OutputStream os) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++").append("\n").append("[").append(this.id).append(", ")
-		.append(this.kategorie).append("] ").append(this.title).append(": \n").append(this.frage);
-		OutputStreamWriter osw = new OutputStreamWriter(os);
-		osw.write(sb.toString().toCharArray());
-		osw.flush();
-	}
-	
-	public abstract void zeigeRueckseite(OutputStream os) throws IOException;
-	
-	public void druckeKarte() throws IOException {
-		zeigeVorderseite(System.out);
-		zeigeRueckseite(System.out);
 	}
 	
 	@Override
@@ -96,24 +77,12 @@ public abstract class Lernkarte implements ValidierbareKarte, CsvExportable, Ser
 		this.id = id;
 	}
 
-	public void setKategorie(String kategorie) {
-		this.kategorie = kategorie;
-	}
-
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
 	public String getFrage() {
 		return frage;
-	}
-
-	public void setFrage(String frage) {
-		this.frage = frage;
 	}
 
 	public static int getCounter() {

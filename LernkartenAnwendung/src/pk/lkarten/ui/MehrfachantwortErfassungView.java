@@ -1,7 +1,7 @@
 package pk.lkarten.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 
@@ -123,10 +123,17 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 					JOptionPane.showConfirmDialog(null, e, "Karte nicht hinzugefuegt", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
-				LernkartenApp.listview.getItems().clear();
-				Iterator<Lernkarte> it = LernkartenApp.lk.getIterator();
-				while(it.hasNext()) {
-					 LernkartenApp.listview.getItems().add(it.next().toString());
+				
+				try {
+					LernkartenApp.listview.getItems().clear();
+					if(LernkartenApp.Sortierung == 0)
+						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAbsteigend());
+					if(LernkartenApp.Sortierung == 1)
+						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAufsteigend());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 				}
 				s.close();
 			}

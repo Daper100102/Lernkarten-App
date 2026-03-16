@@ -1,8 +1,5 @@
 package pk.lkarten;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
 public class MehrfachantwortKarte extends Lernkarte {
@@ -19,30 +16,6 @@ public class MehrfachantwortKarte extends Lernkarte {
 		super(kategorie, title, frage);
 		this.moeglicheAntworten = moeglicheAntworten;
 		this.richtigeAntworten = richtigeAntworten;
-	}
-	
-	public void zeigeVorderseite(OutputStream os) throws IOException {
-		super.zeigeVorderseite(os);
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < this.moeglicheAntworten.length; i++) {
-			sb.append("\n").append(Integer.toString(1+i)).append(": ").append(this.moeglicheAntworten[i]);
-		}
-		OutputStreamWriter osw = new OutputStreamWriter(os);
-		osw.write(sb.toString().toCharArray());
-		osw.flush();
-	}
-
-	@Override
-	public void zeigeRueckseite(OutputStream os) throws IOException {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Die richtigen Antworten sind:");
-		for (int i: this.richtigeAntworten) {
-			sb.append(Integer.toString(1+i)).append(": ").append(moeglicheAntworten[i-1]).append("\n");
-		}
-		sb.append("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-		OutputStreamWriter osw = new OutputStreamWriter(os);
-		osw.write(sb.toString().toCharArray());
-		osw.flush();
 	}
 	
 	@Override
@@ -104,10 +77,6 @@ public class MehrfachantwortKarte extends Lernkarte {
 		return sb.toString();
 	}
 
-	public void setMoeglicheAntworten(String[] moeglicheAntworten) {
-		this.moeglicheAntworten = moeglicheAntworten;
-	}
-
 	public int[] getRichtigeAntworten() {
 		return richtigeAntworten;
 	}
@@ -130,7 +99,4 @@ public class MehrfachantwortKarte extends Lernkarte {
 		return a;
 	}
 
-	public void setRichtigeAntworten(int[] richtigeAntworten) {
-		this.richtigeAntworten = richtigeAntworten;
-	}
 }

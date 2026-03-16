@@ -38,12 +38,24 @@ public class Lernkartei {
 		}
 	}
 	
-	public void druckeAlleKarten() throws IOException {
-		ArrayList<Lernkarte> list = new ArrayList<>(Lernkartei);
-		Collections.sort(list, (o1, o2) -> -(o1.compareTo(o2)));
-		for(Lernkarte k: list) {
-			k.druckeKarte();
+	public ArrayList<String> sortiertNachIdAbsteigend() throws IOException {
+		ArrayList<Lernkarte> list1 = new ArrayList<>(Lernkartei);
+		ArrayList<String> list2 = new ArrayList<>();
+		Collections.sort(list1, (o1, o2) -> -(o1.compareTo(o2)));
+		for(Lernkarte l: list1) {
+			list2.add(l.toString());
 		}
+		return list2;
+	}
+	
+	public ArrayList<String> sortiertNachIdAufsteigend() throws IOException {
+		ArrayList<Lernkarte> list1 = new ArrayList<>(Lernkartei);
+		ArrayList<String> list2 = new ArrayList<>();
+		Collections.sort(list1, (o1, o2) -> (o1.compareTo(o2)));
+		for(Lernkarte l: list1) {
+			list2.add(l.toString());
+		}
+		return list2;
 	}
 	
 	public int gibAnzahlKarten() {
@@ -102,14 +114,13 @@ public class Lernkartei {
 		try(FileInputStream fis = new FileInputStream(datei); ObjectInputStream ois = new ObjectInputStream(fis)) {
 			hs = (HashSet<Lernkarte>)ois.readObject();
 		}
-		Lernkarte.setCounter(hs.size()+1);
-		for(Lernkarte k: Lernkartei) {
-			if(k.getId() < Lernkarte.getCounter()) {
-				k.setId(Lernkarte.getCounter());
-				Lernkarte.setCounter((Lernkarte.getCounter()+1));
-			}
-		}
 		Lernkartei.addAll(hs);
+		Lernkarte.setCounter(Lernkartei.size()+1);
+		
+		int i = 1;
+		for(Lernkarte k: Lernkartei) {
+			k.setId(i++);
+		}
 	}
 	
 	public Iterator<Lernkarte> getIterator() {

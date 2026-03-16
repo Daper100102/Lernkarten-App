@@ -1,6 +1,6 @@
 package pk.lkarten.ui;
 
-import java.util.Iterator;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -65,10 +65,17 @@ public class EinzelantwortErfassungView extends ErfassungView {
 					JOptionPane.showConfirmDialog(null, e, "Karte nicht hinzugefuegt", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
-				LernkartenApp.listview.getItems().clear();
-				Iterator<Lernkarte> i = LernkartenApp.lk.getIterator();
-				while(i.hasNext()) {
-					 LernkartenApp.listview.getItems().add(i.next().toString());
+
+				try {
+					LernkartenApp.listview.getItems().clear();
+					if(LernkartenApp.Sortierung == 0)
+						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAbsteigend());
+					if(LernkartenApp.Sortierung == 1)
+						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAufsteigend());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
 				}
 				s.close();
 			}

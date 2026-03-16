@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Iterator;
 import javax.swing.JOptionPane;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -36,7 +35,9 @@ import pk.lkarten.MehrfachantwortKarte;
 
 public class LernkartenApp extends Application {
 	public static Lernkartei lk = new Lernkartei();
+	
 	public static ListView<String> listview;
+	public static int Sortierung = 0; 
 	@Override
 	public void start(Stage arg0) throws Exception {
 		// TODO Auto-generated method stub
@@ -46,13 +47,18 @@ public class LernkartenApp extends Application {
 		
 		Menu m1 = new Menu("Datei");
 		Menu m2 = new Menu("Lernkartei");
+		Menu m3 = new Menu("Sortieren");
 		
 		MenuItem mi1 = new MenuItem("Laden");
 		MenuItem mi2 = new MenuItem("Speichern");
 		MenuItem mi3 = new MenuItem("CSV-Export");
 		MenuItem mi4 = new MenuItem("Beenden");
-		MenuItem mi5 = new MenuItem("Einzelantwortkarte hinzufügen");
-		MenuItem mi6 = new MenuItem("Mehrfachantwortkarten hinzufügen");
+		
+		MenuItem mi21 = new MenuItem("Einzelantwortkarte hinzufügen");
+		MenuItem mi22 = new MenuItem("Mehrfachantwortkarten hinzufügen");
+		
+		MenuItem mi31 = new MenuItem("Nach ID Absteigend");
+		MenuItem mi32 = new MenuItem("Nach ID Aufsteigend");
 		
 		listview = new ListView<String>();
 		ScrollPane sp = new ScrollPane(listview);
@@ -73,20 +79,22 @@ public class LernkartenApp extends Application {
 		m1.getItems().add(mi3);
 		m1.getItems().add(new SeparatorMenuItem());
 		m1.getItems().add(mi4);
-		m2.getItems().add(mi5);
-		m2.getItems().add(mi6);
+		
+		m2.getItems().add(mi21);
+		m2.getItems().add(mi22);
+		
+		m3.getItems().add(mi31);
+		m3.getItems().add(mi32);
 		
 		mb.getMenus().add(m1);
 		mb.getMenus().add(m2);
+		mb.getMenus().add(m3);
 		
 		bp.setTop(mb);
 		bp.setCenter(sp);
 		bp.setBottom(hb);
-		
-		Iterator<Lernkarte> i = lk.getIterator();
-		while(i.hasNext()) {
-			 listview.getItems().add(i.next().toString());
-		} 
+
+		listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
 		
 		mi1.setAccelerator(KeyCombination.valueOf("Ctrl+L"));
 		mi2.setAccelerator(KeyCombination.valueOf("Ctrl+S"));
@@ -107,17 +115,17 @@ public class LernkartenApp extends Application {
 					File fl = new File(sl);
 					try {
 						lk.Laden(fl);
+						listview.getItems().clear();
+						if(Sortierung == 0)
+							listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
+						if(Sortierung == 1)
+							listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
 					} catch (ClassNotFoundException e) {
 						JOptionPane.showConfirmDialog(null, e, "ClassNotFoundException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					} catch (IOException e) {
 						JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
-					}
-					listview.getItems().clear();
-					Iterator<Lernkarte> i = lk.getIterator();
-					while(i.hasNext()) {
-						 listview.getItems().add(i.next().toString());
 					}
 				}
 			}
@@ -203,21 +211,56 @@ public class LernkartenApp extends Application {
 			}
 		});
 		
-		mi5.setOnAction(new EventHandler<ActionEvent>() {			
+		mi21.setOnAction(new EventHandler<ActionEvent>() {			
 			@Override
 			public void handle(ActionEvent arg0) {
 				Stage s = new Stage();
 				EinzelantwortErfassungView eev = new EinzelantwortErfassungView(s, null);
 				eev.showView();
+				listview.getItems().clear();
 			}
 		});
 		
-		mi6.setOnAction(new EventHandler<ActionEvent>() {	
+		mi22.setOnAction(new EventHandler<ActionEvent>() {	
 			@Override
 			public void handle(ActionEvent arg0) {
 				Stage s = new Stage();
 				MehrfachantwortErfassungView mev = new MehrfachantwortErfassungView(s, null);
 				mev.showView();
+			}
+		});
+		
+		mi31.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				Sortierung = 0;
+				listview.getItems().clear();
+				try {
+					listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		mi32.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				Sortierung = 1;
+				listview.getItems().clear();
+				try {
+					listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
 			}
 		});
 		

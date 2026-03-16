@@ -1,8 +1,5 @@
 package pk.lkarten;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Objects;
 
 public class EinzelantwortKarte extends Lernkarte {
@@ -17,15 +14,6 @@ public class EinzelantwortKarte extends Lernkarte {
 		
 		super(kategorie, title, frage);
 		this.antwort = antwort;
-	}
-	
-
-	@Override
-	public void zeigeRueckseite(OutputStream os) throws IOException {
-		String s = antwort + "\n" + "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-		OutputStreamWriter osw = new OutputStreamWriter(os);
-		osw.write(s.toCharArray());
-		osw.flush();
 	}
 	
 	@Override
