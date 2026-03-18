@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+
 import javax.swing.JOptionPane;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -35,12 +36,15 @@ import pk.lkarten.MehrfachantwortKarte;
 
 public class LernkartenApp extends Application {
 	public static Lernkartei lk = new Lernkartei();
-	
+	public static Lernkartei alk = new Lernkartei();
+	public static String kategorie = null;
+	public static int kartentyp = 2;
+	Text beschreibung = new Text();
 	public static ListView<String> listview;
-	public static int Sortierung = 0; 
+	public static int sortierung = 0; 
 	@Override
 	public void start(Stage arg0) throws Exception {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub		
 		BorderPane bp = new BorderPane();	
 		
 		MenuBar mb = new MenuBar();
@@ -56,6 +60,9 @@ public class LernkartenApp extends Application {
 		
 		MenuItem mi21 = new MenuItem("Einzelantwortkarte hinzufügen");
 		MenuItem mi22 = new MenuItem("Mehrfachantwortkarten hinzufügen");
+		Menu mi23 = new Menu("Zeige Karten");
+		MenuItem mi231 = new MenuItem("Zeige alle Kategorien");
+		MenuItem mi232 = new MenuItem("Zeige bestimmte Kategorie");
 		
 		MenuItem mi31 = new MenuItem("Nach ID Absteigend");
 		MenuItem mi32 = new MenuItem("Nach ID Aufsteigend");
@@ -65,8 +72,10 @@ public class LernkartenApp extends Application {
 		
 		Button b = new Button("Lernen!");
 		Spinner<Integer> spin = new Spinner<Integer>();
-		HBox hb = new HBox(b, spin);
+		setzeBeschreibung();
+		HBox hb = new HBox(b, spin, beschreibung);
 		
+		beschreibung.setFont(Font.font("Arial", 20));
 		sp.setFitToWidth(true);
 		sp.setFitToHeight(true);
 		spin.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1, 1));			
@@ -82,6 +91,9 @@ public class LernkartenApp extends Application {
 		
 		m2.getItems().add(mi21);
 		m2.getItems().add(mi22);
+		m2.getItems().add(mi23);
+		mi23.getItems().add(mi231);
+		mi23.getItems().add(mi232);
 		
 		m3.getItems().add(mi31);
 		m3.getItems().add(mi32);
@@ -114,11 +126,38 @@ public class LernkartenApp extends Application {
 				if(sl != null) {
 					File fl = new File(sl);
 					try {
-						lk.Laden(fl);
+						alk.Laden(fl);
+						
+						if(kategorie != null) {
+							switch(kartentyp) {
+							case 0:
+								lk.gibEinträgeZurKategorieUndEinzelantwort(alk, kategorie);
+								break;
+							case 1:
+								lk.gibEinträgeZurKategorieUndMehrfachantwort(alk, kategorie);
+								break;
+							case 2:
+								lk.gibEinträgeZurKategorie(alk, kategorie);
+								break;
+							}
+						} else {
+							switch(kartentyp) {
+							case 0:
+								lk.gibAlleEinträgeUndEinzelantwort(alk);
+								break;
+							case 1:
+								lk.gibAlleEinträgeUndMehrfachantwort(alk);
+								break;
+							case 2:
+								lk.gibAlleEinträge(alk);
+								break;
+							}
+						}
+						
 						listview.getItems().clear();
-						if(Sortierung == 0)
+						if(sortierung == 0)
 							listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
-						if(Sortierung == 1)
+						if(sortierung == 1)
 							listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
 					} catch (ClassNotFoundException e) {
 						JOptionPane.showConfirmDialog(null, e, "ClassNotFoundException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -157,7 +196,7 @@ public class LernkartenApp extends Application {
 				
 				if(ss != null) {
 					try {
-						lk.Speichern(fs);
+						alk.Speichern(fs);
 					} catch (FileNotFoundException e) {
 						JOptionPane.showConfirmDialog(null, e, "FileNotFoundException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
@@ -217,7 +256,6 @@ public class LernkartenApp extends Application {
 				Stage s = new Stage();
 				EinzelantwortErfassungView eev = new EinzelantwortErfassungView(s, null);
 				eev.showView();
-				listview.getItems().clear();
 			}
 		});
 		
@@ -230,12 +268,87 @@ public class LernkartenApp extends Application {
 			}
 		});
 		
+		mi231.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				kategorie = null;
+				String[] lkt = {"Einzelantwort", "Mehrfachantwort", "Beide"};
+				kartentyp = JOptionPane.showOptionDialog(null, "Welche Kartentypen willst du übernehmen?", "LernkartenTypen", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, lkt, lkt[0]);
+								
+				switch(kartentyp) {
+					case 0:
+						lk.gibAlleEinträgeUndEinzelantwort(alk);
+						break;
+					case 1:
+						lk.gibAlleEinträgeUndMehrfachantwort(alk);
+						break;
+					case 2:
+						lk.gibAlleEinträge(alk);
+						break;
+				}
+				
+				try {
+					listview.getItems().clear();
+					if(sortierung == 0)
+						listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
+					if(sortierung == 1)
+						listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+				setzeBeschreibung();
+			}
+		});
+		
+		mi232.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				String hilfe = JOptionPane.showInputDialog("Bitte gib eine Kategorie ein:");
+				if(hilfe != null) {
+					kategorie = hilfe;
+					String[] lkt = {"Einzelantwort", "Mehrfachantwort", "Beide"};		
+					kartentyp = JOptionPane.showOptionDialog(null, "Welche Kartentypen willst du übernehmen?", "LernkartenTypen", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, lkt, lkt[0]);
+									
+					switch(kartentyp) {
+						case 0:
+							lk.gibEinträgeZurKategorieUndEinzelantwort(alk, kategorie);
+							break;
+						case 1:
+							lk.gibEinträgeZurKategorieUndMehrfachantwort(alk, kategorie);
+							break;
+						case 2:
+							lk.gibEinträgeZurKategorie(alk, kategorie);
+							break;
+					}
+				
+					try {
+						listview.getItems().clear();
+						if(sortierung == 0)
+							listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
+						if(sortierung == 1)
+							listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+						e.printStackTrace();
+					}
+					setzeBeschreibung();
+				}
+			}
+		});
+
 		mi31.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				Sortierung = 0;
+				sortierung = 0;
 				listview.getItems().clear();
 				try {
 					listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
@@ -252,7 +365,7 @@ public class LernkartenApp extends Application {
 			@Override
 			public void handle(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				Sortierung = 1;
+				sortierung = 1;
 				listview.getItems().clear();
 				try {
 					listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
@@ -263,6 +376,7 @@ public class LernkartenApp extends Application {
 				}
 			}
 		});
+
 		
 		b.setOnAction(new EventHandler<ActionEvent>() {
 			
@@ -285,7 +399,7 @@ public class LernkartenApp extends Application {
 		arg0.show();
 	}
 	
-	public static void zeigeVorderseite(Lernkarte[] lk, int i, Stage s) {
+	public void zeigeVorderseite(Lernkarte[] lk, int i, Stage s) {
 		if(i < lk.length) {
 			s.setTitle(lk[i].getKategorie());
 			
@@ -330,7 +444,7 @@ public class LernkartenApp extends Application {
 		}
 	}
 	
-	public static void zeigeRueckseite(Lernkarte[] lk, int i, Stage s) {
+	public void zeigeRueckseite(Lernkarte[] lk, int i, Stage s) {
 		if(i < lk.length) {
 			s.setTitle(lk[i].getKategorie());
 			
@@ -376,6 +490,34 @@ public class LernkartenApp extends Application {
 			s.show();
 		} else {
 			s.close();
+		}
+	}
+	
+	public void setzeBeschreibung() {
+		if(kategorie != null) {
+			switch(kartentyp) {
+			case 0:
+				beschreibung.setText(kategorie.trim().replaceAll("\\s+", "") + " / einzelantwort Karten");
+				break;
+			case 1:
+				beschreibung.setText(kategorie.trim().replaceAll("\\s+", "") + " / mehrfachantwort Karten");
+				break;
+			case 2:
+				beschreibung.setText(kategorie.trim().replaceAll("\\s+", "") + " / alle Kartentypen");
+				break;
+			}
+		} else {
+			switch(kartentyp) {
+			case 0:
+				beschreibung.setText("alle Kategorien / einzelantwort Karten");
+				break;
+			case 1:
+				beschreibung.setText("alle Kategorien / mehrfachantwort Karten");
+				break;
+			case 2:
+				beschreibung.setText("alle Kategorien / alle Kartentypen");
+				break;
+			}
 		}
 	}
 	

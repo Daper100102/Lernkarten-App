@@ -56,7 +56,18 @@ public class EinzelantwortErfassungView extends ErfassungView {
 			@Override
 			public void handle(ActionEvent ae) {
 				try {
-					LernkartenApp.lk.hinzufuegen(new EinzelantwortKarte(tf1.getText(), tf2.getText(), tf3.getText(), ta1.getText()));
+					karte = new EinzelantwortKarte(tf1.getText(), tf2.getText(), tf3.getText(), ta1.getText());
+					LernkartenApp.alk.hinzufuegen(karte);
+					
+					if(LernkartenApp.kategorie != null) {
+						if((LernkartenApp.kartentyp == 0 || LernkartenApp.kartentyp == 2) && karte.vergleicheKategorien(LernkartenApp.kategorie)) {
+							LernkartenApp.lk.hinzufuegen(karte);
+						}
+					} else {
+						if(LernkartenApp.kartentyp == 0 || LernkartenApp.kartentyp == 2) {
+							LernkartenApp.lk.hinzufuegen(karte);
+						}
+					}
 				} catch (UngueltigeKarteException e) {
 					JOptionPane.showConfirmDialog(null, e, "UngueltigeKarteException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 					Lernkarte.setCounter(Lernkarte.getCounter()-1);
@@ -68,9 +79,9 @@ public class EinzelantwortErfassungView extends ErfassungView {
 
 				try {
 					LernkartenApp.listview.getItems().clear();
-					if(LernkartenApp.Sortierung == 0)
+					if(LernkartenApp.sortierung == 0)
 						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAbsteigend());
-					if(LernkartenApp.Sortierung == 1)
+					if(LernkartenApp.sortierung == 1)
 						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAufsteigend());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

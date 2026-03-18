@@ -59,8 +59,4 @@ public class EinzelantwortKarte extends Lernkarte {
 	public String getAntwort() {
 		return antwort;
 	}
-
-	public void setAntwort(String antwort) {
-		this.antwort = antwort;
-	}
 }

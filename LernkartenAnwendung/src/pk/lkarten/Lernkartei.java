@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Lernkartei {
@@ -62,16 +61,51 @@ public class Lernkartei {
 		return Lernkartei.size();
 	}
 	
-	public Lernkarte[] gibKartenZuKategorie(String kategorie) {
-		Lernkarte[] lkk = new Lernkarte[gibAnzahlKarten()];
-		int i = 0;
-		for(Lernkarte k: Lernkartei) {
-			if(k.getKategorie().equals(kategorie)) {
-				lkk[i] = k;
-				i++;
-			}
+	public void gibAlleEinträge(Lernkartei lk) {
+		Lernkartei.clear();
+		for(Lernkarte l: lk.Lernkartei) {
+			Lernkartei.add(l);
 		}
-		return lkk;
+	}
+	
+	public void gibAlleEinträgeUndEinzelantwort(Lernkartei lk) {
+		Lernkartei.clear();
+		for(Lernkarte l: lk.Lernkartei) {
+			if(l instanceof EinzelantwortKarte)
+				Lernkartei.add(l);
+		}
+	}
+	
+	public void gibAlleEinträgeUndMehrfachantwort(Lernkartei lk) {
+		Lernkartei.clear();
+		for(Lernkarte l: lk.Lernkartei) {
+			if(l instanceof MehrfachantwortKarte)
+				Lernkartei.add(l);
+		}
+	}
+	
+	public void gibEinträgeZurKategorie(Lernkartei lk, String kategorie) {
+		Lernkartei.clear();
+		for(Lernkarte l: lk.Lernkartei) {
+			if(l.vergleicheKategorien(kategorie))
+				Lernkartei.add(l);
+		}
+	}
+	
+	public void gibEinträgeZurKategorieUndEinzelantwort(Lernkartei lk, String kategorie) {
+		Lernkartei.clear();
+		for(Lernkarte l: lk.Lernkartei) {
+			if(l.vergleicheKategorien(kategorie) && l instanceof EinzelantwortKarte)
+				Lernkartei.add(l);
+		}
+	}
+	
+	public void gibEinträgeZurKategorieUndMehrfachantwort(Lernkartei lk, String kategorie) {
+		Lernkartei.clear();
+		for(Lernkarte l: lk.Lernkartei) {
+			if(l.vergleicheKategorien(kategorie) && l instanceof MehrfachantwortKarte)
+				Lernkartei.add(l);
+		}
 	}
 	
 	public Lernkarte[] erzeugeDeck(int anzahlKarten) {
@@ -121,9 +155,5 @@ public class Lernkartei {
 		for(Lernkarte k: Lernkartei) {
 			k.setId(i++);
 		}
-	}
-	
-	public Iterator<Lernkarte> getIterator() {
-		return Lernkartei.iterator();
 	}
 }

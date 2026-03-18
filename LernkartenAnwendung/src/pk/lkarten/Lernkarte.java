@@ -36,10 +36,17 @@ public abstract class Lernkarte implements Comparable<Lernkarte>, ValidierbareKa
 		sb.append(id).append(",").append(kategorie).append(",").append(title).append(",").append(frage);
 		return sb.toString();
 	}
+	
+	public boolean vergleicheKategorien(String k) {
+		String kat1 = kategorie.trim().replaceAll("\\s+", "");
+		String kat2 = k.trim().replaceAll("\\s+", "");
+		
+		return kat1.equalsIgnoreCase(kat2);
+	}
 
 	@Override
 	public String toString() {
-		return "Lernkarte [id=" + id + ", kategorie=" + kategorie + ", title=" + title + "]";
+		return "Lernkarte [id=" + id + ", kategorie=" + kategorie.trim().replaceAll("\\s+", " ") + ", title=" + title.trim().replaceAll("\\s+", " ") + "]";
 	}
 
 	@Override
