@@ -1,7 +1,5 @@
 package pk.lkarten.ui;
 
-import java.io.IOException;
-
 import javax.swing.JOptionPane;
 
 import javafx.event.ActionEvent;
@@ -58,16 +56,6 @@ public class EinzelantwortErfassungView extends ErfassungView {
 				try {
 					karte = new EinzelantwortKarte(tf1.getText(), tf2.getText(), tf3.getText(), ta1.getText());
 					LernkartenApp.alk.hinzufuegen(karte);
-					
-					if(LernkartenApp.kategorie != null) {
-						if((LernkartenApp.kartentyp == 0 || LernkartenApp.kartentyp == 2) && karte.vergleicheKategorien(LernkartenApp.kategorie)) {
-							LernkartenApp.lk.hinzufuegen(karte);
-						}
-					} else {
-						if(LernkartenApp.kartentyp == 0 || LernkartenApp.kartentyp == 2) {
-							LernkartenApp.lk.hinzufuegen(karte);
-						}
-					}
 				} catch (UngueltigeKarteException e) {
 					JOptionPane.showConfirmDialog(null, e, "UngueltigeKarteException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 					Lernkarte.setCounter(Lernkarte.getCounter()-1);
@@ -77,17 +65,7 @@ public class EinzelantwortErfassungView extends ErfassungView {
 					e.printStackTrace();
 				}
 
-				try {
-					LernkartenApp.listview.getItems().clear();
-					if(LernkartenApp.sortierung == 0)
-						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAbsteigend());
-					if(LernkartenApp.sortierung == 1)
-						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAufsteigend());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				}
+				LernkartenApp.aktualisiereListe();
 				s.close();
 			}
 		});

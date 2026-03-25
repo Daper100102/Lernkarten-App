@@ -29,9 +29,7 @@ public class Lernkartei {
 		karte.validiere();
 		if(!Lernkartei.contains(karte)) {
 			Lernkartei.add(karte);
-			System.out.println("\n Lernkarte [" + karte.getId() + "] wurde erfolgreich hinzugefuegt \n");
 		}else {
-			System.out.println("Lernkarte exsestiert bereits.");
 			Lernkarte.setCounter(Lernkarte.getCounter()-1);
 			throw new VorhandeneKarteException("Lernkarte exsestiert bereits.");
 		}
@@ -149,11 +147,41 @@ public class Lernkartei {
 			hs = (HashSet<Lernkarte>)ois.readObject();
 		}
 		Lernkartei.addAll(hs);
-		Lernkarte.setCounter(Lernkartei.size()+1);
 		
 		int i = 1;
 		for(Lernkarte k: Lernkartei) {
 			k.setId(i++);
 		}
+		Lernkarte.setCounter(Lernkartei.size()+1);
+	}
+	
+	public void entferneKarteMitId(int id) throws UngueltigeKarteException {
+		
+		Lernkarte ka = null;
+		for(Lernkarte k: Lernkartei) {
+			if(k.getId() == id) {
+				ka = k;
+			}
+		}
+		if(ka == null) throw new UngueltigeKarteException("Karte: "+Integer.toString(id)+" exsetiert nicht!");
+		
+		Lernkartei.remove(ka); 
+		
+		int i = 1;
+		for(Lernkarte k2: Lernkartei) {
+			k2.setId(i++);
+		}
+		Lernkarte.setCounter(Lernkartei.size()+1);
+	}
+	
+	public Lernkarte gibKarteMitIdZurueck(int id) throws UngueltigeKarteException {
+		Lernkarte karte;
+		for(Lernkarte k: Lernkartei) {
+			if(k.getId() == id) {
+				karte = k;
+				return karte;
+			}
+		}
+		throw new UngueltigeKarteException("Karte: "+Integer.toString(id)+" exsetiert nicht!");
 	}
 }

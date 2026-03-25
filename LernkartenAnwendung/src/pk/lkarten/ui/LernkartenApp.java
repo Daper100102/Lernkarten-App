@@ -33,6 +33,7 @@ import pk.lkarten.EinzelantwortKarte;
 import pk.lkarten.Lernkarte;
 import pk.lkarten.Lernkartei;
 import pk.lkarten.MehrfachantwortKarte;
+import pk.lkarten.UngueltigeKarteException;
 
 public class LernkartenApp extends Application {
 	public static Lernkartei lk = new Lernkartei();
@@ -63,6 +64,8 @@ public class LernkartenApp extends Application {
 		Menu mi23 = new Menu("Zeige Karten");
 		MenuItem mi231 = new MenuItem("Zeige alle Kategorien");
 		MenuItem mi232 = new MenuItem("Zeige bestimmte Kategorie");
+		MenuItem mi24 = new MenuItem("Karte bearbeiten");
+		MenuItem mi25 = new MenuItem("Karte entfernen");
 		
 		MenuItem mi31 = new MenuItem("Nach ID Absteigend");
 		MenuItem mi32 = new MenuItem("Nach ID Aufsteigend");
@@ -91,9 +94,13 @@ public class LernkartenApp extends Application {
 		
 		m2.getItems().add(mi21);
 		m2.getItems().add(mi22);
+		m2.getItems().add(new SeparatorMenuItem());
 		m2.getItems().add(mi23);
 		mi23.getItems().add(mi231);
 		mi23.getItems().add(mi232);
+		m2.getItems().add(new SeparatorMenuItem());
+		m2.getItems().add(mi24);
+		m2.getItems().add(mi25);
 		
 		m3.getItems().add(mi31);
 		m3.getItems().add(mi32);
@@ -128,37 +135,6 @@ public class LernkartenApp extends Application {
 					try {
 						alk.Laden(fl);
 						
-						if(kategorie != null) {
-							switch(kartentyp) {
-							case 0:
-								lk.gibEinträgeZurKategorieUndEinzelantwort(alk, kategorie);
-								break;
-							case 1:
-								lk.gibEinträgeZurKategorieUndMehrfachantwort(alk, kategorie);
-								break;
-							case 2:
-								lk.gibEinträgeZurKategorie(alk, kategorie);
-								break;
-							}
-						} else {
-							switch(kartentyp) {
-							case 0:
-								lk.gibAlleEinträgeUndEinzelantwort(alk);
-								break;
-							case 1:
-								lk.gibAlleEinträgeUndMehrfachantwort(alk);
-								break;
-							case 2:
-								lk.gibAlleEinträge(alk);
-								break;
-							}
-						}
-						
-						listview.getItems().clear();
-						if(sortierung == 0)
-							listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
-						if(sortierung == 1)
-							listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
 					} catch (ClassNotFoundException e) {
 						JOptionPane.showConfirmDialog(null, e, "ClassNotFoundException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
@@ -166,6 +142,7 @@ public class LernkartenApp extends Application {
 						JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 						e.printStackTrace();
 					}
+					aktualisiereListe();
 				}
 			}
 		});
@@ -277,29 +254,7 @@ public class LernkartenApp extends Application {
 				String[] lkt = {"Einzelantwort", "Mehrfachantwort", "Beide"};
 				kartentyp = JOptionPane.showOptionDialog(null, "Welche Kartentypen willst du übernehmen?", "LernkartenTypen", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, lkt, lkt[0]);
 								
-				switch(kartentyp) {
-					case 0:
-						lk.gibAlleEinträgeUndEinzelantwort(alk);
-						break;
-					case 1:
-						lk.gibAlleEinträgeUndMehrfachantwort(alk);
-						break;
-					case 2:
-						lk.gibAlleEinträge(alk);
-						break;
-				}
-				
-				try {
-					listview.getItems().clear();
-					if(sortierung == 0)
-						listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
-					if(sortierung == 1)
-						listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				}
+				aktualisiereListe();
 				setzeBeschreibung();
 			}
 		});
@@ -315,31 +270,66 @@ public class LernkartenApp extends Application {
 					String[] lkt = {"Einzelantwort", "Mehrfachantwort", "Beide"};		
 					kartentyp = JOptionPane.showOptionDialog(null, "Welche Kartentypen willst du übernehmen?", "LernkartenTypen", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, lkt, lkt[0]);
 									
-					switch(kartentyp) {
-						case 0:
-							lk.gibEinträgeZurKategorieUndEinzelantwort(alk, kategorie);
-							break;
-						case 1:
-							lk.gibEinträgeZurKategorieUndMehrfachantwort(alk, kategorie);
-							break;
-						case 2:
-							lk.gibEinträgeZurKategorie(alk, kategorie);
-							break;
-					}
-				
-					try {
-						listview.getItems().clear();
-						if(sortierung == 0)
-							listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
-						if(sortierung == 1)
-							listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
-						e.printStackTrace();
-					}
+					aktualisiereListe();
 					setzeBeschreibung();
 				}
+			}
+		});
+		
+		mi24.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				String hilfe = JOptionPane.showInputDialog("Bitte gib die ID der Karte ein:");
+				Stage s = new Stage();
+				Lernkarte k = null;
+				if(hilfe != null) {
+					hilfe = hilfe.trim().replaceAll("\\s+", "");
+					int id = 0;
+					try {
+						id = Integer.parseInt(hilfe);
+						k = lk.gibKarteMitIdZurueck(id);
+						alk.entferneKarteMitId(id);
+			        } catch (NumberFormatException e) {
+			        	JOptionPane.showConfirmDialog(null, e, "Ungültige Eingabe – keine ganze Zahl.", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			        	e.printStackTrace();
+			        } catch (UngueltigeKarteException e) {
+			        	JOptionPane.showConfirmDialog(null, e, "Überprüfe die ID nochmal in der Liste", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			        	e.printStackTrace();
+					}
+					
+					if(k instanceof EinzelantwortKarte) {
+						EinzelantwortErfassungView eev = new EinzelantwortErfassungView(s, (EinzelantwortKarte)k);
+						eev.showView();
+					} else if(k instanceof MehrfachantwortKarte) {
+						MehrfachantwortErfassungView mev = new MehrfachantwortErfassungView(s, (MehrfachantwortKarte)k);
+						mev.showView();
+					}					
+					aktualisiereListe();
+				}
+			}
+		});
+
+		mi25.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				String hilfe = JOptionPane.showInputDialog("Bitte gib die ID der Karte ein:");
+				if(hilfe != null) {
+					hilfe = hilfe.trim().replaceAll("\\s+", "");
+					int id = 0;
+					try {
+						id = Integer.parseInt(hilfe);
+						alk.entferneKarteMitId(id);
+			        } catch (NumberFormatException e) {
+			        	JOptionPane.showConfirmDialog(null, e, "Ungültige Eingabe – keine ganze Zahl.", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			        	e.printStackTrace();
+			        } catch (UngueltigeKarteException e) {
+			        	JOptionPane.showConfirmDialog(null, e, "Überprüfe die ID nochmal in der Liste", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			        	e.printStackTrace();
+					} 	
+				}
+				aktualisiereListe();
 			}
 		});
 
@@ -518,6 +508,44 @@ public class LernkartenApp extends Application {
 				beschreibung.setText("alle Kategorien / alle Kartentypen");
 				break;
 			}
+		}
+	}
+	
+	public static void aktualisiereListe() {
+		if(kategorie != null) {
+			switch(kartentyp) {
+			case 0:
+				lk.gibEinträgeZurKategorieUndEinzelantwort(alk, kategorie);
+				break;
+			case 1:
+				lk.gibEinträgeZurKategorieUndMehrfachantwort(alk, kategorie);
+				break;
+			case 2:
+				lk.gibEinträgeZurKategorie(alk, kategorie);
+				break;
+			}
+		} else {
+			switch(kartentyp) {
+			case 0:
+				lk.gibAlleEinträgeUndEinzelantwort(alk);
+				break;
+			case 1:
+				lk.gibAlleEinträgeUndMehrfachantwort(alk);
+				break;
+			case 2:
+				lk.gibAlleEinträge(alk);
+				break;
+			}
+		}
+		listview.getItems().clear();
+		try {
+		if(sortierung == 0)
+			listview.getItems().addAll(lk.sortiertNachIdAbsteigend());
+		if(sortierung == 1)
+			listview.getItems().addAll(lk.sortiertNachIdAufsteigend());
+		} catch (IOException e) {
+			JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		}
 	}
 	

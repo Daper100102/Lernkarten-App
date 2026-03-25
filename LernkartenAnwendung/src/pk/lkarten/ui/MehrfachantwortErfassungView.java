@@ -1,6 +1,5 @@
 package pk.lkarten.ui;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -46,7 +45,8 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 	    
 	    ant = new VBox();
 	    Button b3 = new Button("Neue Antwort");
-	    HBox hb5 = new HBox(b3);
+	    Button b4 = new Button("Antwort entfernen");
+	    HBox hb5 = new HBox(b3, b4);
 	    ScrollPane scroll = new ScrollPane(gp);
 	    
 	    hb5.setPadding(new Insets(15.0));
@@ -56,6 +56,7 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 		
 	    if(mehrfachantwort != null) {
 	    	for(int i = 0; i < mehrfachantwort.getMoeglicheAntworten().length; i++) {
+	    		antwort++;
 	    		Label l = new Label("Antwort" + (i+1) + (": "));
 	    		TextArea ta = new TextArea();
 	    		ta.setText(mehrfachantwort.getMoeglicheAntworten()[i]);
@@ -89,6 +90,18 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 			}
 		});
 	    
+	    b4.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if(antwort > 1) {
+					--antwort;
+					ant.getChildren().remove(ant.getChildren().get((antwort-1)));
+				}
+			}
+		});
+	    
 	    b1.setOnAction(new EventHandler<ActionEvent>() {		
 			@Override
 			public void handle(ActionEvent ae) {
@@ -115,16 +128,6 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 				try {
 					karte = new MehrfachantwortKarte(tf1.getText(), tf2.getText(), tf3.getText(), moeglicheAntworten, richtigeAntworten);
 					LernkartenApp.alk.hinzufuegen(karte);
-					
-					if(LernkartenApp.kategorie != null) {
-						if((LernkartenApp.kartentyp == 1 || LernkartenApp.kartentyp == 2) && karte.vergleicheKategorien(LernkartenApp.kategorie)) {
-							LernkartenApp.lk.hinzufuegen(karte);
-						}
-					} else {
-						if(LernkartenApp.kartentyp == 1 || LernkartenApp.kartentyp == 2) {
-							LernkartenApp.lk.hinzufuegen(karte);
-						}
-					}
 				} catch (UngueltigeKarteException e) {
 					JOptionPane.showConfirmDialog(null, e, "UngueltigeKarteException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 					Lernkarte.setCounter(Lernkarte.getCounter()-1);
@@ -134,18 +137,7 @@ public class MehrfachantwortErfassungView extends ErfassungView{
 					JOptionPane.showConfirmDialog(null, e, "Karte nicht hinzugefuegt", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
-				
-				try {
-					LernkartenApp.listview.getItems().clear();
-					if(LernkartenApp.sortierung == 0)
-						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAbsteigend());
-					if(LernkartenApp.sortierung == 1)
-						LernkartenApp.listview.getItems().addAll(LernkartenApp.lk.sortiertNachIdAufsteigend());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					JOptionPane.showConfirmDialog(null, e, "IOException", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				}
+				LernkartenApp.aktualisiereListe();
 				s.close();
 			}
 		});
